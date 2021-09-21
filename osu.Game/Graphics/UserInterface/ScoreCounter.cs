@@ -10,7 +10,7 @@ namespace osu.Game.Graphics.UserInterface
 {
     public abstract class ScoreCounter : RollingCounter<double>
     {
-        protected override double RollingDuration => 1000;
+        protected override double RollingDuration => 200;
         protected override Easing RollingEasing => Easing.Out;
 
         /// <summary>

@@ -10,7 +10,7 @@ namespace osu.Game.Skinning
 {
     public class LegacyScoreCounter : GameplayScoreCounter, ISkinnableDrawable
     {
-        protected override double RollingDuration => 1000;
+        protected override double RollingDuration => 200;
         protected override Easing RollingEasing => Easing.Out;
 
         public bool UsesFixedAnchor { get; set; }
