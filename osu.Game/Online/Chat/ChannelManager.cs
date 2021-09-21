@@ -238,6 +238,16 @@ namespace osu.Game.Online.Chat
                     PostMessage(content, true, target);
                     break;
 
+                case "gaplok":
+                    if (string.IsNullOrWhiteSpace(content))
+                    {
+                        target.AddNewMessages(new ErrorMessage("Usage: /gaplok [action]"));
+                        break;
+                    }
+
+                    PostMessage($"gaplok {content}", true, target);
+                    break;
+
                 case "join":
                     if (string.IsNullOrWhiteSpace(content))
                     {
