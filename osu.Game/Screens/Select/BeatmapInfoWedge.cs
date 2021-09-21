@@ -29,6 +29,9 @@ using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.UI;
 using osu.Game.Graphics.Containers;
+using osu.Game.Scoring;
+using osu.Game.Rulesets.Scoring;
+
 
 namespace osu.Game.Screens.Select
 {
@@ -157,6 +160,7 @@ namespace osu.Game.Screens.Select
 
             private Container difficultyColourBar;
             private StarRatingDisplay starRatingDisplay;
+            private OsuSpriteText performanceDisplay;
 
             private ILocalisedBindableString titleBinding;
             private ILocalisedBindableString artistBinding;
@@ -255,6 +259,14 @@ namespace osu.Game.Screens.Select
                                 Shear = -wedged_container_shear,
                                 Alpha = 0f,
                             },
+                            performanceDisplay = new OsuSpriteText
+                            {
+                                Anchor = Anchor.TopRight,
+                                Origin = Anchor.TopRight,
+                                Font = OsuFont.GetFont(size: 17.2f, weight: FontWeight.Bold),
+                                RelativeSizeAxes = Axes.X,
+                                Truncate = false,
+                            },
                             StatusPill = new BeatmapSetOnlineStatusPill
                             {
                                 Anchor = Anchor.TopRight,
@@ -320,6 +332,7 @@ namespace osu.Game.Screens.Select
                 {
                     starRatingDisplay.FadeIn(transition_duration);
                     starRatingDisplay.Current.Value = s.NewValue ?? default;
+                    setPPDisplay();
                 });
 
                 // no difficulty means it can't have a status to show
@@ -329,6 +342,34 @@ namespace osu.Game.Screens.Select
                 addInfoLabels();
             }
 
+            private void setPPDisplay() {
+                double ppValue = 0.0;
+                var rulesetInstance = ruleset.CreateInstance();
+                if (rulesetInstance is ILegacyRuleset) {
+                    ScoreInfo scoreInfo = new ScoreInfo();
+                    scoreInfo.Accuracy = 1D;
+                    scoreInfo.Mods = mods.Value.ToArray();
+                    switch(ruleset.ID) {
+                        case 0:
+                        case 1:
+                            scoreInfo.Statistics[HitResult.Great] = starRatingDisplay.Current.Value.MaxCombo;
+                            break;
+                        case 2:
+                            scoreInfo.Statistics[HitResult.Perfect] = starRatingDisplay.Current.Value.MaxCombo;
+                            break;
+                        case 3:
+                            scoreInfo.TotalScore = 1000000;
+                            break;
+                    }
+                    var ppCalculator = rulesetInstance.CreatePerformanceCalculator(this.beatmap, scoreInfo);
+                    if (ppCalculator != null) {
+                        ppValue = ppCalculator.Calculate();
+                    }
+                }
+                if (!Double.IsFinite(ppValue)) ppValue = 0.0;
+                performanceDisplay.Text = $"{ppValue:0}pp";
+            }
+            
             private void setMetadata(string source)
             {
                 ArtistLabel.Text = artistBinding.Value;
@@ -415,7 +456,7 @@ namespace osu.Game.Screens.Select
 
                 string labelText = Precision.AlmostEquals(bpmMin, bpmMax)
                     ? $"{bpmMin:0}"
-                    : $"{bpmMin:0}-{bpmMax:0} (mostly {mostCommonBPM:0})";
+                    : $"{bpmMin:0}-{bpmMax:0} (C {mostCommonBPM:0})";
 
                 bpmLabelContainer.Child = new InfoLabel(new BeatmapStatistic
                 {
