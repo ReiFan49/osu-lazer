@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Mods
     public abstract class ModEasy : Mod, IApplicableToDifficulty
     {
         public override string Name => "Easy";
-        public override string Acronym => "EZ";
+        public override string Acronym => "EM";
         public override IconUsage? Icon => OsuIcon.ModEasy;
         public override ModType Type => ModType.DifficultyReduction;
         public override double ScoreMultiplier => 0.5;
