@@ -14,6 +14,7 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
+using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
 using osu.Game.Screens.Play.HUD;
@@ -71,11 +72,19 @@ namespace osu.Game.Screens.Ranking.Expanded
                 new PerformanceStatistic(score),
             };
 
+            if (score.Mods.Any())
+                foreach (var currentMod in score.Mods) {
+                    if (currentMod == null)
+                        continue;
+                    if (currentMod is ModChallenge)
+                        topStatistics.Add(ObtainModStatistics(score, (ModChallenge)currentMod));
+                }
+
             var bottomStatistics = new List<HitResultStatistic>();
 
             foreach (var result in score.GetStatisticsForDisplay())
                 bottomStatistics.Add(new HitResultStatistic(result));
-
+            
             statisticDisplays.AddRange(topStatistics);
             statisticDisplays.AddRange(bottomStatistics);
 
@@ -244,6 +253,7 @@ namespace osu.Game.Screens.Ranking.Expanded
             }
         }
 
+        private StatisticDisplay ObtainModStatistics(ScoreInfo s, ModChallenge m) => new ChallengeStatistic(s, m);
         protected override void LoadComplete()
         {
             base.LoadComplete();

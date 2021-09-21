@@ -15,8 +15,8 @@ namespace osu.Game.Screens.Ranking.Expanded.Statistics
     /// </summary>
     public class CounterStatistic : StatisticDisplay
     {
-        private readonly int count;
-        private readonly int? maxCount;
+        protected int count;
+        protected int? maxCount;
 
         private RollingCounter<int> counter;
 
