@@ -11,6 +11,9 @@ using osu.Game.Rulesets.Taiko.Objects.Drawables;
 using osu.Game.Rulesets.Taiko.UI;
 using osu.Game.Rulesets.UI;
 
+using osu.Game.Configuration;
+using osu.Framework.Bindables;
+
 namespace osu.Game.Rulesets.Taiko.Mods
 {
     public class TaikoModHidden : ModHidden, IApplicableToDrawableRuleset<TaikoHitObject>
@@ -28,7 +31,15 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// How long hitobjects take to fade out, in terms of the scrolling length.
         /// Range: [0, 1]
         /// </summary>
-        private const float fade_out_duration = 0.375f;
+        [SettingSource("Fadepoint", "Change the fadepoint of the notes")]
+        public BindableFloat Scale { get; } = new BindableFloat(0.375f)
+        {
+            Precision = 0.125f,
+            MinValue = 0.25f,
+            MaxValue = 0.50f,
+        };
+        // private const float fade_out_duration = 0.375f;
+        private float fade_out_duration => Scale.Value;
 
         private DrawableTaikoRuleset drawableRuleset;
 
